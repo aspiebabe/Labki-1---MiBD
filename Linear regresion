@@ -1,0 +1,34 @@
+from matplotlib import pyplot as plt
+from sklearn.datasets import make_regression
+import numpy as np
+from scipy.stats import norm
+x,y = make_regression(n_samples=100, n_features=1,n_informative=1, noise=20, random_state=1)
+x_a = np.transpose(x) #transponuje zebym mogla mnozyc, potrzebuje wymiarow x - 1x100 y 100x1
+y_predicted = []
+def lsmethodgetparametr(x,y):
+    n = np.size(x) #ilosc pomiarow w macierzy
+    mx = np.mean(x)
+    my = np.mean(y)
+    Sxy = np.sum(y*x) - n*my*mx
+    Sxx = np.sum(x*x) - n*mx*mx
+    a = Sxy / Sxx
+    b = my - a * mx
+    return(a,b)
+res = lsmethodgetparametr(x_a,y)
+res1 = lsmethodgetparametr(x,y)
+print(res)
+a, b = res
+c, d = res1
+y_pred = b + a*x
+
+#nowe dane przepuszczamy przez model regresji wyprowadzony wczesniej, wylosowalam je sobie z rozkladu normalnego
+new_data = norm.rvs(loc=0, scale=1, size=10)
+y_est = []
+def estimate_parameter(x):
+    y = a*x+b
+    y_est.append(y)
+estimate_parameter(new_data)
+plt.scatter(x,y)
+plt.scatter(new_data,y_est, color = 'red')
+plt.plot(x, y_pred, color = 'pink')
+plt.show()
